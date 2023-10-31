@@ -9,6 +9,7 @@ import {
   PokemonName,
   PokemonDetailImage,
 } from '@/styles/styled'
+import apis from '@/utils/serverConnector/apis'
 
 interface PokemonDetail {
   name: string
@@ -26,8 +27,9 @@ const PokemonDetailPage = () => {
     const loadPokemonDetail = async () => {
       if (typeof name === 'string') {
         try {
-          const data = await fetchPokemonDetail(name)
-          setPokemon(data)
+          const data = await apis.getPokemonSearch({ name })
+
+          setPokemon(data.data)
           // 포켓몬 로드 시 랜덤 포획 확률 설정
           const randomCatchRate = Math.floor(Math.random() * 100) + 1
           setCatchRate(randomCatchRate)
