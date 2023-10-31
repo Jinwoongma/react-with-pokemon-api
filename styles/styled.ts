@@ -1,10 +1,9 @@
-// styles/styled.ts
 import styled from 'styled-components'
 
 export const Container = styled.div`
   padding: 20px;
-  text-align: center; // 컨텐츠를 가운데 정렬
-  width: 100%; // 컨테이너의 너비를 100%로 설정
+  text-align: center;
+  width: 100%;
   box-sizing: border-box;
 `
 
@@ -13,7 +12,7 @@ export const Input = styled.input`
   font-size: 16px;
   margin: 0 auto 20px;
   display: block;
-  width: 90%; // 검색창의 너비를 90%로 설정
+  width: 90%;
 `
 
 export const PokemonListContainer = styled.div`
@@ -31,15 +30,15 @@ export const PokemonCard = styled.div`
   border-radius: 8px;
   display: block;
   text-align: center;
-  text-decoration: none; // 링크의 기본 스타일을 제거
-  color: inherit; // 링크의 기본 색상을 제거
-  width: 150px; // 카드의 너비를 150px로 설정
-  height: 150px; // 카드의 높이를 150px로 설정
-  box-sizing: border-box; // 패딩과 보더를 포함하여 전체 크기를 계산
+  text-decoration: none;
+  color: inherit;
+  width: 150px;
+  height: 150px;
+  box-sizing: border-box;
+  position: relative;
 
   @media (max-width: 768px) {
-    // 768px 이하의 화면에서는
-    width: 100%; // 너비를 100%로 설정
+    width: 100%;
   }
 `
 
@@ -53,7 +52,33 @@ export const LoadMoreButton = styled.button`
   font-size: 16px;
 `
 
-export const NoMoreText = styled.p`
-  text-align: center;
+export const DetailContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center; // 요소들을 가운데 정렬
+  padding: 20px;
+`
+
+export const PokemonDetailImage = styled.img`
+  width: 200px;
+`
+
+export const PokemonName = styled.h1`
+  font-size: 24px;
+`
+
+export const CatchButton = styled.button`
+  padding: 10px 20px;
   font-size: 16px;
+`
+
+export const CaughtTag = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 0 5px 0 0;
 `
