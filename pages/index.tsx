@@ -134,6 +134,7 @@ const PokemonList = () => {
   }, [search])
 
   // 검색 디바운스를 위한 Side Effect
+  // TODO: REVIEW) 디바운스 훅을 따로 커스텀훅으로 처리 가능
   useEffect(() => {
     const timer = setTimeout(() => {
       if (search.trim()) {
@@ -147,6 +148,7 @@ const PokemonList = () => {
   }, [search, handleSearch])
 
   // 스크롤 이벤트로 더 많은 포켓몬을 불러오는 함수
+  // TODO: REVIEW) 무한 스크롤만 처리 가능한 커스텀 훅 분리 필요
   const loadMorePokemons = useCallback(() => {
     if (!state.hasMore || noResults) return
 
