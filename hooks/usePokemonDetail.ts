@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PokemonType } from '@/utils/serverConnector/type'
+import { PokemonDetail } from '@/utils/serverConnector/type'
 import apis from '@/utils/serverConnector/apis'
 import PokemonUtils from '@/utils/pokemonUtils'
 
 const usePokemonDetail = ({ name }: { name: string | string[] | undefined }) => {
-  const [pokemon, setPokemon] = useState<PokemonType | null>(null)
+  const [pokemon, setPokemon] = useState<PokemonDetail | null>(null)
   const [isCaught, setIsCaught] = useState<boolean>(false)
   const catchRate = useMemo(() => {
     return Math.floor(Math.random() * 100) + 1
@@ -14,7 +14,7 @@ const usePokemonDetail = ({ name }: { name: string | string[] | undefined }) => 
     const loadPokemonDetail = async () => {
       if (typeof name === 'string') {
         try {
-          const data = await apis.getPokemonSearch({ name })
+          const data = await apis.getPokemonDetail({ name })
 
           setPokemon(data.data)
 

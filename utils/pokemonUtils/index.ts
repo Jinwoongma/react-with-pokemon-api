@@ -1,6 +1,6 @@
-import { PokemonType } from '@/utils/serverConnector/type'
+import { PokemonDetail } from '@/utils/serverConnector/type'
 
-export const savePokemon = (pokemon: PokemonType) => {
+export const savePokemon = (pokemon: PokemonDetail) => {
   const caughtPokemons = JSON.parse(localStorage.getItem('caughtPokemons') || '[]')
   localStorage.setItem('caughtPokemons', JSON.stringify([...caughtPokemons, pokemon]))
 }
@@ -9,7 +9,7 @@ export const catchPokemon = ({
   pokemon,
   catchRate,
 }: {
-  pokemon: PokemonType
+  pokemon: PokemonDetail
   catchRate: number
 }) => {
   const catchFailed = () => {

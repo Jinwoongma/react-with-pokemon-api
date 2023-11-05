@@ -1,68 +1,60 @@
 import axios from 'axios'
+import { PokemonDetail, PokemonListResponse } from '@/utils/serverConnector/type'
+import { Pokemon } from '@/pages/type'
+import apis from '@/utils/serverConnector/apis'
+import { getRelativePath } from '@/utils/commonUtils/getRelativePath'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-interface Pokemon {
-  name: string
-  url: string
-  sprites?: { front_default: string }
-}
-
-interface PokemonDetail {
-  name: string
-  sprites: { front_default: string }
-}
-
-interface PokemonListResponse {
-  results: Pokemon[]
-}
 
 export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promise<Pokemon[]> => {
   try {
     if (search) {
       try {
-        const detailResponse = await axios.get<PokemonDetail>(`${API_BASE_URL}/pokemon/${search}`)
+        const detailResponse = await apis.getPokemonDetail({ name: search })
         return [
           {
-            name: search,
-            url: detailResponse.data.sprites.front_default,
+            name: detailResponse.data.name,
             sprites: detailResponse.data.sprites,
           },
         ]
       } catch (error) {
-        console.error('Pokemon not found', error)
-        return [] // 포켓몬이 없을 경우 빈 배열 반환
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
+            console.error('Pokemon not found')
+          } else {
+            console.error('An error occurred', error)
+          }
+        } else {
+          console.error('Non-axios error occurred', error)
+        }
+        return [] // Return an empty array for all error cases
       }
     } else {
-      const response = await axios.get<PokemonListResponse>(`${API_BASE_URL}/pokemon`, {
-        params: { limit, offset },
-      })
-      const pokemonList = response.data.results
-      const pokemonWithSprites = await Promise.all(
-        pokemonList.map(async (pokemon) => {
-          try {
-            const detailResponse = await axios.get<PokemonDetail>(pokemon.url)
-            return { ...pokemon, sprites: detailResponse.data.sprites }
-          } catch (error) {
-            console.error('Error fetching pokemon detail', error)
-            return pokemon
-          }
-        }),
-      )
-      return pokemonWithSprites
+      const response = await apis.getPokemonList({ limit, offset })
+      if (response.status === 200 && response.data) {
+        const pokemonWithSprites = await Promise.all(
+          response.data.results.map(async (pokemon: Pokemon) => {
+            try {
+              if (pokemon.url) {
+                const detailResponse = await apis.getPokemonSprite(
+                  getRelativePath(pokemon.url, API_BASE_URL),
+                )
+                return { ...pokemon, sprites: detailResponse.data.sprites }
+              }
+              return pokemon
+            } catch (error) {
+              console.error('Error fetching pokemon detail', error)
+              return pokemon
+            }
+          }),
+        )
+        return pokemonWithSprites
+      } else {
+        throw new Error('Unexpected response structure')
+      }
     }
   } catch (error) {
     console.error('Error fetching pokemons', error)
-    throw error
-  }
-}
-
-export const fetchPokemonDetail = async (name: string): Promise<PokemonDetail> => {
-  try {
-    const response = await axios.get<PokemonDetail>(`${API_BASE_URL}/pokemon/${name}`)
-    return response.data
-  } catch (error) {
-    console.error('Error fetching pokemon detail', error)
     throw error
   }
 }

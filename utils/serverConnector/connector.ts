@@ -1,28 +1,31 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const API_BASE_URL = 'https://pokeapi.co/api/v2'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-type ApiConnectorType = {
-  url: string
-  config?: AxiosRequestConfig
+interface ApiConnectorType {
+  url: string;
+  config?: AxiosRequestConfig;
+  params?: object;
 }
 
-const connector = ({ url, config }: ApiConnectorType) => {
-  const data = axios.get(`${API_BASE_URL}/${url}`, config)
-
-  return data
-}
+// Now the connector is a generic function
+const connector = async <T>({ url, config }: ApiConnectorType): Promise<AxiosResponse<T>> => {
+  const response = await axios.get<T>(`${API_BASE_URL}/${url}`, config);
+  return response;
+};
 
 const ApiConnector = {
-  get: ({ url, config }: ApiConnectorType) => {
-    return connector({
-      url,
-      config,
-    })
+
+  get: async <T>({ url, config, params }: ApiConnectorType): Promise<AxiosResponse<T>> => {
+    const fullConfig: AxiosRequestConfig = {
+      ...config,
+      params,
+    };
+    return connector<T>({ url, config: fullConfig });
   },
   // post: () => {},
   // patch: () => {},
   // delete: () => {},
-}
+};
 
-export default ApiConnector
+export default ApiConnector;
