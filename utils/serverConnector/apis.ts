@@ -1,32 +1,5 @@
 import ApiConnector from '@/utils/serverConnector/connector'
-
-type ServerResponse<T> = Promise<{
-  status: number
-  data: T
-}>
-
-type GetPokemonSearchType = {
-  name: string
-  sprites: { front_default: string }
-}
-
-type GetPokemonListType = {
-  name: string
-  url: string
-}
-
-type PokemonListResponse = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: GetPokemonListType[];
-};
-
-type SpriteResponse = {
-    sprites: {
-      front_default: string;
-    };
-}
+import {GetPokemonSearchType, PokemonListResponse, ServerResponse, SpriteResponse} from "@/utils/serverConnector/type";
 
 const Apis = {
   getPokemonDetail: ({ name }: { name: string }): ServerResponse<GetPokemonSearchType> => {

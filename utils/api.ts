@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { PokemonDetail, PokemonListResponse } from '@/utils/serverConnector/type'
 import { Pokemon } from '@/pages/type'
 import apis from '@/utils/serverConnector/apis'
 import { getRelativePath } from '@/utils/commonUtils/getRelativePath'
@@ -15,6 +14,7 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
           {
             name: detailResponse.data.name,
             sprites: detailResponse.data.sprites,
+            // types: detailResponse.data.types
           },
         ]
       } catch (error) {
@@ -36,10 +36,15 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
           response.data.results.map(async (pokemon: Pokemon) => {
             try {
               if (pokemon.url) {
-                const detailResponse = await apis.getPokemonSprite(
+                const spriteResponse = await apis.getPokemonSprite(
                   getRelativePath(pokemon.url, API_BASE_URL),
                 )
-                return { ...pokemon, sprites: detailResponse.data.sprites }
+                const detailResponse = await apis.getPokemonDetail({ name: pokemon.name })
+                return {
+                  ...pokemon,
+                  sprites: spriteResponse.data.sprites,
+                  types: detailResponse.data.types,
+                }
               }
               return pokemon
             } catch (error) {
@@ -48,6 +53,7 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
             }
           }),
         )
+        // console.log(pokemonWithSprites)
         return pokemonWithSprites
       } else {
         throw new Error('Unexpected response structure')

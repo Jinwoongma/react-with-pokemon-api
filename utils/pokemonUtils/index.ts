@@ -1,4 +1,5 @@
 import { PokemonDetail } from '@/utils/serverConnector/type'
+import { Pokemon } from '@/pages/type'
 
 export const savePokemon = (pokemon: PokemonDetail) => {
   const caughtPokemons = JSON.parse(localStorage.getItem('caughtPokemons') || '[]')
@@ -35,10 +36,24 @@ export const checkPokemon = () => {
   )
 }
 
+export const filterPokemon = (pokemons: Pokemon[], selectedTypes: string[]) => {
+  // 선택된 타입이 없다면 모든 포켓몬을 반환
+  if (selectedTypes.length === 0) {
+    return pokemons
+  }
+
+  // 선택된 타입이 있는 경우 해당 타입에 속하는 포켓몬만 필터링
+  return pokemons.filter(
+    (pokemon: Pokemon) =>
+      pokemon.types?.some((typeInfo) => selectedTypes.includes(typeInfo.type.name)),
+  )
+}
+
 const PokemonUtils = {
   savePokemon: savePokemon,
   catchPokemon: catchPokemon,
   checkPokemon: checkPokemon,
+  filterPokemon: filterPokemon,
 }
 
 export default PokemonUtils

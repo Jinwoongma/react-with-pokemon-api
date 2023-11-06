@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { getTypecolor, PokemonType } from '@/pages/type'
 
 export const Container = styled.div`
   padding: 20px;
@@ -32,8 +33,8 @@ export const PokemonCard = styled.div`
   text-align: center;
   text-decoration: none;
   color: inherit;
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   box-sizing: border-box;
   position: relative;
 
@@ -81,4 +82,23 @@ export const CaughtTag = styled.div`
   padding: 5px;
   font-size: 12px;
   border-radius: 0 5px 0 0;
+`
+export const PokemonNameTag = styled.div`
+  margin-bottom: 15px;
+  color: black;
+  font-weight: 600;
+`
+export const PokemonTypeWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+`
+
+export const PokemonTypeBadge = styled.span<{ type: PokemonType }>`
+  background-color: ${({ type }) => getTypecolor(type)};
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 0.8em;
+  color: white;
 `
