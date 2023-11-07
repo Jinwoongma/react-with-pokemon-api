@@ -14,7 +14,6 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
           {
             name: detailResponse.data.name,
             sprites: detailResponse.data.sprites,
-            // types: detailResponse.data.types
           },
         ]
       } catch (error) {
@@ -27,7 +26,7 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
         } else {
           console.error('Non-axios error occurred', error)
         }
-        return [] // Return an empty array for all error cases
+        return []
       }
     } else {
       const response = await apis.getPokemonList({ limit, offset })
@@ -53,7 +52,6 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
             }
           }),
         )
-        // console.log(pokemonWithSprites)
         return pokemonWithSprites
       } else {
         throw new Error('Unexpected response structure')
@@ -61,6 +59,31 @@ export const fetchPokemons = async (limit = 20, offset = 0, search = ''): Promis
     }
   } catch (error) {
     console.error('Error fetching pokemons', error)
+    throw error
+  }
+}
+
+// 포켓몬 타입별로 필터링된 목록을 가져오는 함수
+export const fetchFilteredPokemons = async (selectedTypes: string[]): Promise<Pokemon[]> => {
+  try {
+    const fetches = selectedTypes.map((typeName) => apis.getPokemonListByType({ typeName }))
+    const responses = await Promise.all(fetches)
+
+    const pokemonNames = new Set<string>()
+    for (const response of responses) {
+      if (response.status === 200 && response.data) {
+        response.data.pokemon.forEach((pokemon) => {
+          pokemonNames.add(pokemon.pokemon.name)
+        })
+      }
+    }
+
+    const pokemonDetailsFetches = Array.from(pokemonNames).map((name) => fetchPokemons(1, 0, name))
+    const pokemonDetails = (await Promise.all(pokemonDetailsFetches)).flat()
+
+    return pokemonDetails
+  } catch (error) {
+    console.error('Error fetching filtered pokemons', error)
     throw error
   }
 }

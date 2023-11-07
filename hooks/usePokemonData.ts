@@ -1,11 +1,7 @@
 import { useReducer, useCallback } from 'react'
 import { fetchPokemons } from '@/utils/api'
-import { Pokemon, State, Action } from '@/pages/type'
-import { usePokemonFilter } from '@/hooks/userPokemonTypeFilter'
-import { types } from 'util'
-import { act } from 'react-dom/test-utils'
+import { State, Action } from '@/pages/type'
 import { filterPokemon } from '@/utils/pokemonUtils'
-import { type } from 'os'
 
 const initialState = {
   pokemons: [],
@@ -13,6 +9,7 @@ const initialState = {
   hasMore: true,
   initialLoading: true,
   selectedTypes: [],
+  isFetching: false,
 }
 
 const reducer = (state: State, action: Action): State => {
@@ -22,8 +19,8 @@ const reducer = (state: State, action: Action): State => {
     case 'LOAD_SUCCESS':
       return {
         ...state,
-        pokemons: [...state.pokemons, ...action.payload],
-        hasMore: action.payload.length > 0,
+        pokemons: [...state.pokemons, ...action.filteredPayload],
+        hasMore: action.originalPayload.length > 0,
       }
     case 'RESET':
       return {
@@ -31,13 +28,14 @@ const reducer = (state: State, action: Action): State => {
         selectedTypes: state.selectedTypes,
       }
     case 'CHANGE_FILTER':
-      const newSelectedTypes = state.selectedTypes.includes(action.filter)
-        ? state.selectedTypes.filter((t) => t !== action.filter)
-        : [...state.selectedTypes, action.filter]
       return {
-        ...state, // 기존 상태를 유지합니다 (offset과 hasMore 등)
-        selectedTypes: newSelectedTypes,
-        pokemons: filterPokemon(state.pokemons, newSelectedTypes), // 상태에 반영됩니다.
+        ...state,
+        selectedTypes: action.selectedTypes,
+      }
+    case 'SET_IS_FETCHING':
+      return {
+        ...state,
+        isFetching: action.isFetching,
       }
     default:
       return state
@@ -52,12 +50,27 @@ export const usePokemonData = () => {
     try {
       const pokemons = await fetchPokemons(50, state.offset)
       // 가져온 데이터를 현재 선택된 타입에 맞게 필터링합니다.
-      const filteredPokemons = filterPokemon(pokemons, state.selectedTypes);
-      dispatch({ type: 'LOAD_SUCCESS', payload: filteredPokemons })
+      const filteredPokemons = filterPokemon(pokemons, state.selectedTypes)
+      if (pokemons.length === 50 && state.pokemons.length < 20) {
+        dispatch({
+          type: 'LOAD_SUCCESS',
+          filteredPayload: filteredPokemons,
+          originalPayload: pokemons,
+        })
+        dispatch({ type: 'LOAD_MORE' })
+      } else {
+        dispatch({
+          type: 'LOAD_SUCCESS',
+          filteredPayload: filteredPokemons,
+          originalPayload: pokemons,
+        })
+      }
+      console.log(filteredPokemons)
+      dispatch({ type: 'SET_IS_FETCHING', isFetching: false })
     } catch (error) {
       console.error('Error loading pokemons', error)
     }
-  }, [state.offset, state.selectedTypes])
+  }, [state.offset, state.pokemons.length, state.selectedTypes])
 
   return { state, loadPokemons, dispatch }
 }

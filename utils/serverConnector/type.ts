@@ -1,5 +1,3 @@
-import { PokemonTypeResponse } from '@/pages/type'
-
 export type ServerResponse<T> = Promise<{
   status: number
   data: T
@@ -8,19 +6,19 @@ export type ServerResponse<T> = Promise<{
 export type GetPokemonSearchType = {
   name: string
   sprites: { front_default: string }
-  types: PokemonTypeResponse[]
+  types: PokemonTypeEntry[]
 }
 
-export type GetPokemonListType = {
+export type PokemonInfo = {
   name: string
   url: string
 }
 
-export type PokemonListResponse = {
+export type GetPokemonListType = {
   count: number
   next: string | null
   previous: string | null
-  results: GetPokemonListType[]
+  results: PokemonInfo[]
 }
 
 export type SpriteResponse = {
@@ -31,5 +29,35 @@ export type SpriteResponse = {
 export type PokemonDetail = {
   name: string
   sprites: { front_default: string }
-  types: PokemonTypeResponse[]
+  types: PokemonTypeEntry[]
+}
+
+export type PokeymonTypeInfo = {
+  name: string
+  url: string
+}
+
+export type PokemonTypeEntry = {
+  slot: number
+  type: PokeymonTypeInfo
+}
+
+export type LanguageInfo = {
+  name: string;
+  url: string;
+}
+
+export type NameEntry = {
+  language: LanguageInfo;
+  name: string;
+}
+
+export type PokemonEntry = {
+  pokemon: PokemonInfo;
+  slot: number;
+}
+
+export type getPokemonListByTypeType = {
+  names: NameEntry[];
+  pokemon: PokemonEntry[];
 }

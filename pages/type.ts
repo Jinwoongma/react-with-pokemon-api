@@ -1,8 +1,10 @@
+import { PokemonTypeEntry } from '@/utils/serverConnector/type'
+
 export interface Pokemon {
   name: string
   url?: string
   sprites?: { front_default: string }
-  types?: PokemonTypeResponse[]
+  types?: PokemonTypeEntry[]
 }
 
 // 리듀서의 상태를 담는 인터페이스
@@ -11,22 +13,16 @@ export interface State {
   offset: number
   hasMore: boolean
   selectedTypes: string[]
+  isFetching: boolean
 }
 
 // 액션 타입들을 정의하는 타입
 export type Action =
   | { type: 'LOAD_MORE' }
-  | { type: 'LOAD_SUCCESS'; payload: Pokemon[] }
+  | { type: 'LOAD_SUCCESS'; filteredPayload: Pokemon[], originalPayload: Pokemon[] }
   | { type: 'RESET' }
-  | { type: 'CHANGE_FILTER'; filter: string }
-
-export type PokemonTypeResponse = {
-  slot: number
-  type: {
-    name: string
-    url: string
-  }
-}
+  | { type: 'CHANGE_FILTER'; selectedTypes: string[] }
+  | { type: 'SET_IS_FETCHING'; isFetching: boolean }
 
 export type PokemonType =
   | 'normal'

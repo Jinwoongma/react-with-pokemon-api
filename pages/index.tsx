@@ -30,13 +30,15 @@ const PokemonList = () => {
   const debouncedSearch = useDebounce(search, SEARCH_DEBOUNCE_TIME)
 
   const changeFilter = useCallback(
-    (filter: string) => {
-      // RESET 액션을 디스패치하여 상태를 초기화합니다.
+    (filterType: string) => {
+      const newSelectedTypes = state.selectedTypes.includes(filterType)
+        ? state.selectedTypes.filter((type) => type !== filterType)
+        : [...state.selectedTypes, filterType]
+
       dispatch({ type: 'RESET' })
-      // 필터 상태를 업데이트하기 위해 CHANGE_FILTER 액션을 디스패치합니다.
-      dispatch({ type: 'CHANGE_FILTER', filter })
+      dispatch({ type: 'CHANGE_FILTER', selectedTypes: newSelectedTypes })
     },
-    [dispatch],
+    [dispatch, state.selectedTypes],
   )
 
   useEffect(() => {
@@ -44,10 +46,6 @@ const PokemonList = () => {
       handleSearch()
     }
   }, [debouncedSearch, handleSearch])
-
-  useEffect(() => {
-    loadPokemons()
-  }, [state.selectedTypes, loadPokemons])
 
   const observerElementRef = useInfiniteScroll({
     loadMore: () => dispatch({ type: 'LOAD_MORE' }),
