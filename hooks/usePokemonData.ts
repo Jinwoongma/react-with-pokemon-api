@@ -51,7 +51,7 @@ export const usePokemonData = () => {
       const pokemons = await fetchPokemons(50, state.offset)
       // 가져온 데이터를 현재 선택된 타입에 맞게 필터링합니다.
       const filteredPokemons = filterPokemon(pokemons, state.selectedTypes)
-      if (pokemons.length === 50 && state.pokemons.length < 20) {
+      if (pokemons.length === 50 && state.pokemons.length < 30) {
         dispatch({
           type: 'LOAD_SUCCESS',
           filteredPayload: filteredPokemons,
@@ -70,7 +70,7 @@ export const usePokemonData = () => {
     } catch (error) {
       console.error('Error loading pokemons', error)
     }
-  }, [state.offset, state.pokemons.length, state.selectedTypes])
+  }, [state.offset, state.selectedTypes])
 
   return { state, loadPokemons, dispatch }
 }

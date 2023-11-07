@@ -102,3 +102,9 @@ export const PokemonTypeBadge = styled.span<{ type: PokemonType }>`
   font-size: 0.8em;
   color: white;
 `
+export const FilterWrapper = styled.div`
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between; /* Can be changed in the live sample */
+`

@@ -2,15 +2,15 @@ import { useEffect, useReducer, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { usePokemonData } from '@/hooks/usePokemonData'
 import {
-  Container,
-  Input,
-  PokemonListContainer,
-  PokemonCard,
-  PokemonImage,
-  CaughtTag,
-  PokemonTypeWrapper,
-  PokemonTypeBadge,
-  PokemonNameTag,
+    Container,
+    Input,
+    PokemonListContainer,
+    PokemonCard,
+    PokemonImage,
+    CaughtTag,
+    PokemonTypeWrapper,
+    PokemonTypeBadge,
+    PokemonNameTag, FilterWrapper,
 } from '@/styles/styled'
 import { useSearch } from '@/hooks/useSearch'
 import { useInfiniteScroll } from '@/hooks/useInfinityScroll'
@@ -65,7 +65,7 @@ const PokemonList = () => {
           }
         }}
       />
-      <div>
+      <FilterWrapper>
         {Object.keys(colors).map((type) => (
           <label key={type}>
             <input
@@ -76,7 +76,7 @@ const PokemonList = () => {
             {type}
           </label>
         ))}
-      </div>
+      </FilterWrapper>
       {noResults ? (
         <div>No results found</div>
       ) : (
